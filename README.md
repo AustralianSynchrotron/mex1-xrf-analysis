@@ -1,6 +1,6 @@
 # XRF Analysis Toolkit
 
-A comprehensive Python package for X-ray fluorescence (XRF) and differential phase contrast (DPC) analysis.
+An initial attempt to make a Python package for X-ray fluorescence (XRF) and differential phase contrast (DPC) analysis. It is thin but will grow.
 
 ## Features
 
