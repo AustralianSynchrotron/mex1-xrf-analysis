@@ -1,0 +1,160 @@
+XRF-ANALYSIS PROJECT STRUCTURE
+===============================
+
+xrf-analysis/
+│
+├── xrf_analysis/                   # Main package directory
+│   ├── __init__.py                 # Package initialization with convenience imports
+│   │
+│   ├── core/                       # Core analysis functionality
+│   │   ├── __init__.py             # Core module exports
+│   │   ├── physics.py              # XRF physics (edges, efficiency, Compton)
+│   │   ├── database.py             # XRF line database and management
+│   │   ├── corrections.py          # Deadtime & i0 corrections
+│   │   └── peak_detection.py      # Peak detection algorithms
+│   │
+│   ├── visualization/              # Plotting and visualization
+│   │   ├── __init__.py             # Visualization module exports
+│   │   ├── spectra.py              # Spectrum plotting functions
+│   │   └── spatial.py              # Spatial distribution maps
+│   │
+│   ├── dpc/                        # Differential Phase Contrast
+│   │   ├── __init__.py             # DPC module exports
+│   │   └── analysis.py             # DPC calculations and plotting
+│   │
+│   └── cli.py                      # Command-line interface
+│
+├── setup.py                        # Package installation configuration
+├── requirements.txt                # Python dependencies
+├── README.md                       # Documentation and usage guide
+├── LICENSE                         # License file (MIT recommended)
+├── .gitignore                      # Git ignore patterns
+├── example_workflow.py             # Example usage script
+│
+├── tests/                          # Unit tests (optional, to be created)
+│   ├── __init__.py
+│   ├── test_physics.py
+│   ├── test_corrections.py
+│   └── test_peak_detection.py
+│
+└── docs/                           # Additional documentation (optional)
+    ├── api_reference.md
+    ├── tutorial.md
+    └── examples/
+
+
+INSTALLATION STEPS
+==================
+
+1. Create the directory structure:
+   mkdir -p xrf-analysis/xrf_analysis/{core,visualization,dpc}
+
+2. Copy each file to its corresponding location
+
+3. Create empty __init__.py files:
+   touch xrf-analysis/xrf_analysis/core/__init__.py
+   touch xrf-analysis/xrf_analysis/visualization/__init__.py
+   touch xrf-analysis/xrf_analysis/dpc/__init__.py
+
+4. Install in development mode:
+   cd xrf-analysis
+   pip install -e .
+
+
+COMMAND-LINE USAGE
+==================
+
+After installation, you can use the 'xrf-analyze' command:
+
+# Full workflow
+xrf-analyze process data.h5 --plot-all
+
+# Peak detection only
+xrf-analyze detect-peaks data.h5 --height 20 --plot
+
+# Element mapping
+xrf-analyze map-element data.h5 Fe Ka --scale log
+
+# DPC analysis
+xrf-analyze dpc data.h5 --plot
+
+# Spectrum visualization
+xrf-analyze plot-spectrum data.h5
+
+
+PYTHON API USAGE
+================
+
+import xrf_analysis as xrf
+
+# Initialize database
+xrf.initialize_combined_xrf_database()
+
+# Load and process
+results = xrf.correct_xrf_data('data.h5')
+results = xrf.apply_energy_calibration(results)
+
+# Analyze
+detection = xrf.detect_and_identify_xrf_peaks(results)
+
+# Visualize
+xrf.plot_peak_detection_results(detection)
+xrf.plot_element_distribution(results, 'Fe', 'Ka')
+
+
+MODULE DEPENDENCIES
+===================
+
+core/physics.py
+  - numpy
+  - xraylib
+
+core/database.py
+  - xraylib
+  - core/physics.py (imports not needed, separate module)
+
+core/corrections.py
+  - numpy
+  - h5py
+
+core/peak_detection.py
+  - numpy
+  - scipy.signal
+  - scipy.ndimage
+  - core/physics.py
+  - core/database.py
+
+visualization/spectra.py
+  - numpy
+  - matplotlib.pyplot
+
+visualization/spatial.py
+  - numpy
+  - matplotlib.pyplot
+  - matplotlib.colors
+  - mpl_toolkits.axes_grid1
+  - core/physics.py
+  - core/database.py
+
+dpc/analysis.py
+  - numpy
+  - matplotlib.pyplot
+
+cli.py
+  - argparse
+  - sys, os
+  - core module
+  - visualization module
+  - dpc module
+
+
+NEXT STEPS
+==========
+
+1. Create the directory structure
+2. Copy all .py files to their locations
+3. Create supporting files (LICENSE, .gitignore)
+4. Test the installation: pip install -e .
+5. Run example workflow
+6. Add unit tests (optional but recommended)
+7. Create additional documentation as needed
