@@ -190,5 +190,5 @@ Contributions welcome! Please open an issue or submit a pull request.
 
 If you use this package in your research, please cite:
 ```
-[Your citation information]
-```
+https://github.com/AustralianSynchrotron 
+``` 
