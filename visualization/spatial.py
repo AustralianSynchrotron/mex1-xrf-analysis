@@ -24,9 +24,9 @@ def analyze_scan_pattern(results):
     --------
     tuple : (ny, nx, unique_x, unique_y)
     """
-    abs_x = results['abs_x']
-    abs_y = results['abs_y']
-    
+    abs_x = np.asarray(results['abs_x']).flatten()
+    abs_y = np.asarray(results['abs_y']).flatten()
+
     print(f"Total measurement points: {len(abs_x)}")
     print(f"abs_x range: {abs_x.min():.3f} to {abs_x.max():.3f}")
     print(f"abs_y range: {abs_y.min():.3f} to {abs_y.max():.3f}")
@@ -41,10 +41,10 @@ def analyze_scan_pattern(results):
     
     # Check if it's a complete rectangular grid
     if len(unique_x) * len(unique_y) == len(abs_x):
-        print("✓ Complete rectangular grid detected")
+        print("OK Complete rectangular grid detected")
         return len(unique_y), len(unique_x), unique_x, unique_y
     else:
-        print("⚠ Irregular or incomplete grid")
+        print("WARNING Irregular or incomplete grid")
         return None, None, unique_x, unique_y
 
 
@@ -83,9 +83,9 @@ def plot_element_distribution(results, element_name, line_family='Ka',
     # Get data
     energy_axis = results['energy_axis'] / 1000.0
     normalized = results['normalized_spectrum'][0]
-    abs_x = results['abs_x']
-    abs_y = results['abs_y']
-    
+    abs_x = np.asarray(results['abs_x']).flatten()
+    abs_y = np.asarray(results['abs_y']).flatten()
+
     # Apply 45° geometry correction if requested
     if correct_45deg:
         correction_factor = np.sqrt(2)

@@ -24,8 +24,8 @@ def correct_xrf_data(file_path):
         spectrum = f['spectrum'][:]  # type: ignore (1, 41496, 4, 4096) type: ignore
         dtfactor = f['DTFactor'][:]  # type: ignore  (1, 4, 41496) 
         i0 = f['i0'][:]  # type: ignore (1, 41496)
-        abs_x = f['abs_x'][:] # type: ignore
-        abs_y = f['abs_y'][:] # type: ignore
+        abs_x = f['abs_x'][:].flatten() # type: ignore
+        abs_y = f['abs_y'][:].flatten() # type: ignore
         dcm_energy_ev = f['dcm_energy_ev'][:]  # type: ignore Incident energy
         
         print(f"Original spectrum shape: {spectrum.shape}") # type: ignore
@@ -42,13 +42,13 @@ def correct_xrf_data(file_path):
     
     # Step 1: Apply deadtime correction
     corrected_spectrum = spectrum * dtfactor_aligned
-    print("✓ Deadtime correction applied")
+    print("OK Deadtime correction applied")
     
     # Step 2: Normalize by i0
     # Reshape i0 for broadcasting: (1, 41496) -> (1, 41496, 1, 1)
     i0_aligned = i0[..., np.newaxis, np.newaxis]  # type: ignore (1, 41496, 1, 1)
     normalized_spectrum = corrected_spectrum / i0_aligned
-    print("✓ i0 normalization applied")
+    print("OK i0 normalization applied")
     
     return {
         'raw_spectrum': spectrum,
