@@ -33,26 +33,23 @@ def correct_xrf_data(file_path):
         print(f"i0 shape: {i0.shape}") # type: ignore
         print(f"Incident energy shape: {dcm_energy_ev.shape}") # type: ignore
     
-    # Reshape DTFactor to align with spectrum dimensions
-    # From (1, 4, 41496) to (1, 41496, 4, 1) for broadcasting
-    dtfactor_aligned = dtfactor.transpose(0, 2, 1)  # type: ignore (1, 41496, 4)
-    dtfactor_aligned = dtfactor_aligned[..., np.newaxis]  # (1, 41496, 4, 1)
-    
-    print(f"DTFactor aligned shape: {dtfactor_aligned.shape}")
-    
-    # Step 1: Apply deadtime correction
-    corrected_spectrum = spectrum * dtfactor_aligned
+    # Reshape DTFactor: (1, 4, N) -> (1, N, 4, 1) for broadcasting
+    dtfactor_aligned = dtfactor.transpose(0, 2, 1)[..., np.newaxis].astype(np.float32)  # type: ignore
+    i0_aligned = i0[..., np.newaxis, np.newaxis].astype(np.float32)  # type: ignore (1, N, 1, 1)
+
+    # Convert spectrum to float32 then apply corrections in-place.
+    # This keeps peak memory ~2 GB instead of ~11 GB (avoids holding
+    # spectrum + corrected + normalized simultaneously).
+    normalized_spectrum = spectrum.astype(np.float32)  # type: ignore
+    del spectrum
+
+    normalized_spectrum *= dtfactor_aligned
     print("OK Deadtime correction applied")
-    
-    # Step 2: Normalize by i0
-    # Reshape i0 for broadcasting: (1, 41496) -> (1, 41496, 1, 1)
-    i0_aligned = i0[..., np.newaxis, np.newaxis]  # type: ignore (1, 41496, 1, 1)
-    normalized_spectrum = corrected_spectrum / i0_aligned
+
+    normalized_spectrum /= i0_aligned
     print("OK i0 normalization applied")
-    
+
     return {
-        'raw_spectrum': spectrum,
-        'corrected_spectrum': corrected_spectrum, 
         'normalized_spectrum': normalized_spectrum,
         'dtfactor': dtfactor,
         'i0': i0,
